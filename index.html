@@ -121,6 +121,56 @@
             scroll-behavior: smooth;
         }
 
+        .patch-notes-container {
+    background: rgba(20, 24, 40, 0.9);
+    border: 1px solid #f3ae3d;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 800px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.patch-title {
+    color: #f3ae3d;
+    border-bottom: 2px solid rgba(243, 174, 61, 0.3);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.patch-item {
+    margin-top: 15px;
+    padding: 10px;
+    border-left: 3px solid #f3ae3d;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.patch-date {
+    font-size: 0.8rem;
+    color: #bdc3c7;
+    margin-right: 10px;
+}
+
+.patch-version {
+    background: #f3ae3d;
+    color: #141828;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.patch-text {
+    color: #ecf0f1;
+    line-height: 1.6;
+    margin-top: 8px;
+}
+
+.old-patch {
+    opacity: 0.7; /* Eski güncellemeler biraz daha sönük dursun */
+    border-left-color: #bdc3c7;
+}
+
         /* ÜST MENÜ */
         nav {
             position: fixed;
@@ -293,6 +343,27 @@
                 <button class="el-btn" onclick="elementSec('Toprak')" style="background:#f3ae3d;">Toprak</button>
                 <button class="el-btn" onclick="elementSec('Doğa')" style="background:#a5c324;">Doğa</button>
             </div>
+            <div class="patch-notes-container">
+    <h3 class="patch-title">📜 Güncelleme Geçmişi </h3>
+    
+    <div class="patch-item">
+        <span class="patch-date">05 Nisan 2026</span>
+        <span class="patch-version">v1.2</span>
+        <p class="patch-text">
+            ✨ <strong>Yeni Karakter Künyeleri:</strong> Karakter sayfalarına tüy simgesiyle özel künyeler eklendi.<br>
+            🖼️ <strong>Görsel İyileştirmeler:</strong> Beyaz görünen resimler düzeltildi, yerel dosyalara (PNG) geçildi.<br>
+            🛠️ <strong>Hata Düzeltmeleri:</strong> "Bilgi" kutusundaki taşma sorunu giderildi ve içerikler düzene sokuldu.
+        </p>
+    </div>
+
+    <div class="patch-item old-patch">
+        <span class="patch-date">03 Nisan 2026</span>
+        <span class="patch-version">v1.1</span>
+        <p class="patch-text">
+            🚀 "genshinrehberim" Sitesi GitHub üzerinden Türk kitlesine açıldı! Flins rehberi taslağı oluşturuldu.
+        </p>
+    </div>
+</div>
         </div><div class="card-container">
             <div class="character-card" data-element="Su">
                 <img src="https://enka.network/ui/UI_AvatarIcon_Furina.png">
