@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head><style> .character-card {
+    background: #1e2337;
+    border: 2px solid #f3ae3d;
+    border-radius: 15px;
+    padding: 20px;
+    width: 260px;
+    display: flex;           /* Esnek kutu yapısı */
+    flex-direction: column;  /* Öğeleri üst üste diz */
+    align-items: center;     /* Her şeyi yatayda ORTALA */
+    text-align: center;
+    margin: 15px;
+    display: inline-flex;    /* Kartların yan yana dizilmesi için */
+    vertical-align: top;
+}
+
+.character-card img { 
+    width: 100%;
+    max-width: 200px;
+    border-radius: 10px;
+}
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.character-card:hover .card-inner {
+    transform: rotateY(180deg); /* Kartı döndürür */
+}
+
+.card-front, .card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden; /* Arkası görünmesin */
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #f3ae3d;
+    box-sizing: border-box;
+}
+
+.card-front {
+    background: #1e2337;
+}
+
+.card-back {
+    background: #2a2f4a;
+    color: white;
+    transform: rotateY(180deg);
+}
+
+.card-back h4 { color: #f3ae3d; margin-bottom: 15px; border-bottom: 1px solid #f3ae3d; }
+.build-info p { font-size: 0.85rem; margin: 8px 0; text-align: left; width: 100%; }
+
+.mini-btn{
+    display: block;
+    width: 80%;              /* Buton kartın %80'ini kaplasın */
+    margin-top: auto;        /* Yazılar az olsa bile butonu en alta iter */
+    padding: 10px 0;
+    background: #f3ae3d;
+    color: #0c0f1d !important;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+.mini-btn:hover {
+    background: #ffc15e;
+    transform: scale(1.05);
+}
+/* ... buraya daha önce yazdığın diğer CSS'ler gelecek ... */
+
+#loader-wrapper {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #0c0f1d; display: flex; justify-content: center;
+    align-items: center; z-index: 9999;
+    transition: opacity 0.8s ease, visibility 0.8s;
+}
+.loader-content { text-align: center; }
+.element-icons { font-size: 2.5rem; margin-bottom: 20px; }
+.loader-icon { display: inline-block; margin: 0 5px; opacity: 0.2; animation: pulse 1.4s infinite; }
+.loader-icon:nth-child(1) { animation-delay: 0.1s; }
+.loader-icon:nth-child(2) { animation-delay: 0.3s; }
+.loader-icon:nth-child(3) { animation-delay: 0.5s; }
+.loader-icon:nth-child(4) { animation-delay: 0.7s; }
+.loader-icon:nth-child(5) { animation-delay: 0.9s; }
+.loader-icon:nth-child(6) { animation-delay: 1.1s; }
+.loader-icon:nth-child(7) { animation-delay: 1.3s; }
+@keyframes pulse {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); color: #f3ae3d; }
+}
+.loader-bar { width: 200px; height: 4px; background: rgba(255, 255, 255, 0.1); margin: 0 auto; border-radius: 10px; position: relative; overflow: hidden; }
+.loader-bar::after { content: ""; position: absolute; left: -100%; width: 100%; height: 100%; background: #f3ae3d; animation: loadingLine 2s infinite; }
+@keyframes loadingLine { 0% { left: -100%; } 100% { left: 100%; } }
+.loader-hidden { opacity: 0 !important; visibility: hidden !important; }
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flins the Narrator Resmi İnternet Sitesi</title>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0c0f1d;
+            color: white;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ÜST MENÜ */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(12, 15, 29, 0.9);
+            padding: 15px;
+            z-index: 1000;
+            text-align: center;
+            border-bottom: 2px solid #f3ae3d;
+        }
+        nav a {
+            color: white;
+            margin: 0 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        nav a:hover { color: #f3ae3d; }
+
+        /* ANA GİRİŞ */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://4kwallpapers.com/images/wallpapers/flins-genshin-impact-5k-3840x2160-24226.jpg');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+        }
+
+        section { padding: 100px 20px; text-align: center; }
+
+        /* ARAMA VE FİLTRELEME ALANI */
+        .search-container { margin-bottom: 30px; }
+        #karakterAra {
+            padding: 12px 20px;
+            width: 320px;
+            border-radius: 25px;
+            border: 2px solid #f3ae3d;
+            background: #1e2337;
+            color: white;
+            outline: none;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+        #karakterAra:focus { box-shadow: 0 0 15px #f3ae3d; }
+
+        .element-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .el-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            color: white;
+        }
+        .el-btn:hover { transform: translateY(-3px); opacity: 0.8; }
+
+        /* KARAKTER KARTLARI */
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 40px 20px;
+            flex-wrap: wrap;
+        }
+        .character-card {
+            background: #1e2337;
+            border-radius: 15px;
+            padding: 20px;
+            width: 230px;
+            text-align: center;
+            border: 2px solid #3d4461;
+            transition: 0.3s;
+        }
+        .character-card:hover { transform: scale(1.05); border-color: #f3ae3d; }
+        .character-card img { width: 100%; border-radius: 10px; margin-bottom: 10px; }
+        
+        h1 { font-size: 3.5rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        h2 { color: #f3ae3d; font-size: 2.5rem; }
+    </style>
+</head>
+<body>
+    <div id="loader-wrapper">
+    <div class="loader-content">
+        <div class="element-icons">
+            <span class="loader-icon">🔥</span>
+            <span class="loader-icon">💧</span>
+            <span class="loader-icon">⚡</span>
+            <span class="loader-icon">🍃</span>
+            <span class="loader-icon">❄️</span>
+            <span class="loader-icon">🔶</span>
+            <span class="loader-icon">🌿</span>
+        </div>
+        <p>Yükleniyor...</p>
+        <div class="loader-bar"></div>
+    </div>
+</div>
+
+    <nav>
+        <a href="#anasayfa">Ana Sayfa</a>
+        <a href="#hikaye">Hikaye</a>
+        <a href="#mekanikler">Mekanikler</a>
+        <a href="#karakterler">Karakterler</a>
+    </nav>
+
+    <div id="anasayfa" class="hero">
+        <h1 data-aos="fade-down">Flins the Narrator Resmi İnternet Sitesi</h1>
+        <p data-aos="fade-up">Flins the Narrator YouTube hesabının internet sitesine hoş geldiniz! Bu site aracılığıyla öğrenmek istediğiniz şeyleri Türkçe şekilde bulabilirsiniz!</p>
+    </div>
+
+    <section id="hikaye" style="background: #161b33;">
+        <h2 data-aos="fade-right"> Hikaye</h2>
+        <p style="max-width: 800px; margin: 0 auto;">Burada hikaye ile ilgili her şeyi öğrenebilirsiniz!</p>
+    </section>
+
+    </div>
+    <section id="mekanikler">
+    <h2 class="alt-baslik" data-aos="fade-left">Oyun Mekanikleri</h2>
+    <p style="margin-bottom: 40px; opacity: 0.8;">Burada oyun mekanikleriyle ilgili bilgiler edinebilirsiniz!</p>
+    
+    <div class="mechanic-container" style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap;">
+        
+        <div class="character-card" style="cursor: pointer; border-color: #f3ae3d;" onclick="mekanikDetayAc('Element Tepkimeleri', 'Elementlerin birleşimi hasar çarpanlarını değiştirir.', '🔥+💧= Buharlaşma (Hasar artışı)\n🔥+❄️= Erime (Kritik Hasar)\n💧+❄️= Donma (Kontrol)\n⚡+🔥= Aşırı Yükleme (Patlama)')">
+            <div style="font-size: 3.5rem; margin-bottom: 15px;">🌀</div>
+            <h3>Element Tepkimeleri</h3>
+            <button class="build-btn" style="pointer-events: none;">Bilgileri Gör</button>
+        </div>
+
+        <div class="character-card" style="cursor: pointer; opacity: 0.9;" onclick="mekanikDetayAc('Yadigar (Artifact) Sistemi', 'Karakterlerin gücünü belirleyen en önemli ekipmanlar.', 'Her karakter 5 farklı yadigar takabilir. Set bonusları (2 ve 4 parça) karakterinize devasa özellikler kazandırır. Kum saati, Kupa ve Taç ana statları en kritik olanlardır.')">
+            <div style="font-size: 3.5rem; margin-bottom: 15px;">👑</div>
+            <h3>Yadigarlar</h3>
+            <button class="build-btn" style="pointer-events: none;">Bilgileri Gör</button>
+        </div>
+
+        <div class="character-card" style="cursor: pointer; opacity: 0.9;" onclick="mekanikDetayAc('Reçine (Resin) Nedir?', 'Zindanlardan ve Bosslardan ödül almak için kullanılır.', 'Günlük 160 Reçine limitiniz vardır. Her 8 dakikada 1 birim dolar. Haftalık bosslar 30/60, zindanlar ise 20 Reçine harcar.')">
+            <div style="font-size: 3.5rem; margin-bottom: 15px;">🌙</div>
+            <h3>Reçine Sistemi</h3>
+            <button class="build-btn" style="pointer-events: none;">Bilgileri Gör</button>
+        </div>
+
+    </div>
+</section>
+
+    <section id="karakterler" style="background: #161b33;">
+        <h2 data-aos="zoom-in">Karakter Rehberleri</h2>
+
+        <div class="search-container">
+            <input type="text" id="karakterAra" onkeyup="hepsiniFiltrele()" placeholder="Karakter ismi ara...">
+
+            
+            <div class="element-buttons">
+                <button class="el-btn" onclick="elementSec('Tümü')" style="background:#f3ae3d; color:#0c0f1d;">Tümü</button>
+                <button class="el-btn" onclick="elementSec('Ateş')" style="background:#ff4d4d;">Ateş</button>
+                <button class="el-btn" onclick="elementSec('Su')" style="background:#4db3ff;">Su</button>
+                <button class="el-btn" onclick="elementSec('Buz')" style="background:#99ffff; color:#0c0f1d;">Buz</button>
+                <button class="el-btn" onclick="elementSec('Elektrik')" style="background:#b580ff;">Elektrik</button>
+                <button class="el-btn" onclick="elementSec('Rüzgar')" style="background:#2ecc71;">Rüzgar</button>
+                <button class="el-btn" onclick="elementSec('Toprak')" style="background:#f3ae3d;">Toprak</button>
+                <button class="el-btn" onclick="elementSec('Doğa')" style="background:#a5c324;">Doğa</button>
+            </div>
+        </div><div class="card-container">
+            <div class="character-card" data-element="Su">
+                <img src="https://enka.network/ui/UI_AvatarIcon_Furina.png">
+                <h3>Furina</h3>
+                <p>Element: Su</p>
+                <p>Ulus: Fontaine</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Elektrik">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/a/af/Flins_Icon.png/revision/latest/scale-to-width-down/250?cb=20250910175819>
+                <h3>Flins</h3>
+                <p>Element: Elektrik</p>
+                <p>Ulus: Nod-Krai</p>
+           <a href="furina.html" class="mini-btn">Buildi Gör</a>
+    </div>
+            <div class="character-card" data-element="Elektrik">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/0/0b/Ineffa_Icon.png/revision/latest/scale-to-width-down/250?cb=20250730030204>
+                <h3>Ineffa</h3>
+                <p>Element: Elektrik</p>
+                <p>Ulus: Nod-Krai</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Su">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/6/6d/Dahlia_Icon.png/revision/latest/scale-to-width-down/250?cb=20250618025425>
+                <h3>Dahlia</h3>
+                <p>Element: Su</p>
+                <p>Ulus: Mondstadt</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Ateş">
+                <img src=https://hoyo.global/wp-content/uploads/2020/09/aether-lumine-traveler-twins-profile-art-genshin-impact.webp>
+                <h3>Ateş Gezgini</h3>
+                <p>Element: Ateş</p>
+                <p>Ulus: Dünya Dışı</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Elektrik">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/d/dd/Varesa_Icon.png/revision/latest/scale-to-width/360?cb=20250326014831>
+                <h3>Varesa</h3>
+                <p>Element: Elektrik</p>
+                <p>Ulus: Natlan</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Doğa">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/9/9a/Kinich_Icon.png/revision/latest/scale-to-width-down/250?cb=20240917123836>
+                <h3>Kinich</h3>
+                <p>Element: Doğa</p>
+                <p>Ulus: Natlan</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Elektrik">
+                <img src=https://gensh.honeyhunterworld.com/img/fischl_031.webp>
+                <h3>Fischl</h3>
+                <p>Element: Elektrik</p>
+                <p>Ulus: Mondstadt</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Rüzgar">
+                <img src=https://i2.wp.com/images.genshin-builds.com/genshin/characters/sucrose/image.png?strip=all&quality=100>
+                <h3>Sucrose</h3>
+                <p>Element: Rüzgar</p>
+                <p>Ulus: Mondstadt</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Toprak">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/a/ab/Xilonen_Icon.png/revision/latest?cb=20241009015637>
+                <h3>Xilonen</h3>
+                <p>Element: Toprak</p>
+                <p>Ulus: Natlan</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Ateş">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/7/79/Bennett_Icon.png/revision/latest/scale-to-width-down/250?cb=20231215091856>
+                <h3>Bennett</h3>
+                <p>Element: Ateş</p>
+                <p>Ulus: Mondstadt</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Rüzgar">
+                <img src=https://static.wikia.nocookie.net/genshin-impact/images/f/f0/Character_Kaedehara_Kazuha_Thumb.png/revision/latest/scale-to-width/360?cb=20210709144718&path-prefix=tr>
+                <h3>Kaedehara Kazuha</h3>
+                <p>Element: Rüzgar</p>
+                <p>Ulus: Inazuma</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Rüzgar">
+                <img src=https://static.wikia.nocookie.net/genshin-impact/images/b/b9/Character_Xiao_Thumb.png/revision/latest?cb=20210709144211&path-prefix=tr>
+                <h3>Xiao</h3>
+                <p>Element: Rüzgar</p>
+                <p>Ulus: Liyue</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Rüzgar">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/f/f8/Wanderer_Icon.png/revision/latest/scale-to-width-down/250?cb=20221207034209>
+                <h3>Avare</h3>
+                <p>Element: Rüzgar</p>
+                <p>Ulus: Sumeru</p>
+                <button style="background:#f3ae3d; border:none; padding:8px; border-radius:5px; cursor:pointer;">Buildi Gör</button>
+            </div>
+             <div class="character-card" data-element="Buz">
+                <img src=https://static.wikia.nocookie.net/gensin-impact/images/0/03/Skirk_Icon.png/revision/latest?cb=20250618025127 style="width: 100%; border-radius: 10px; margin-bottom: 15px;"> 
+                <h3 style="color: white; margin: 5px 0;">Skirk</h3>
+                <p style="color: #ccc; margin: 5px 0;">Element: Buz</p>
+                <p style="color: #ccc; margin: 5px 0;">Ulus: Dünya Dışı</p>
+                
+                 <a href="furina.html" class="mini-btn">Buildi Gör</a>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        let seciliElement = 'Tümü';
+
+        function elementSec(el) {
+            seciliElement = el;
+            hepsiniFiltrele();
+        }
+
+        function hepsiniFiltrele() {
+            let aramaMetni = document.getElementById('karakterAra').value.toUpperCase();
+            let cards = document.getElementsByClassName('character-card');
+
+            for (let i = 0; i < cards.length; i++) {
+                let isim = cards[i].getElementsByTagName("h3")[0].innerText.toUpperCase();
+                let element = cards[i].getAttribute("data-element");
+
+                let isimUyuyor = isim.indexOf(aramaMetni) > -1;
+                let elementUyuyor = (seciliElement === 'Tümü' || element === seciliElement);
+
+                if (isimUyuyor && elementUyuyor) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+        window.addEventListener("load", function() {
+    const loader = document.getElementById("loader-wrapper");
+    setTimeout(() => {
+        if(loader) {
+            loader.classList.add("loader-hidden");
+        }
+    }, 1500);
+});
+    </script>
+</body>
+</html>
