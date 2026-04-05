@@ -15,6 +15,32 @@
     vertical-align: top;
 }
 
+.countdown-container {
+    background: linear-gradient(135deg, #1a1f32 0%, #2c3e50 100%);
+    border: 2px solid #f3ae3d;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    border-radius: 15px;
+    margin: 20px auto;
+    max-width: 500px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+#timer {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f3ae3d;
+    letter-spacing: 2px;
+}
+
+#timer span {
+    background: rgba(255,255,255,0.1);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 0 2px;
+}
+
 .character-card img { 
     width: 100%;
     max-width: 200px;
@@ -347,7 +373,24 @@
             <div class="patch-notes-container">
     <h3 class="patch-title">📜 Güncelleme Geçmişi </h3>
     
-    <div class="patch-item">
+    <div class="countdown-container">
+    <h3 id="timer-title">🚀 v6.5 / Luna VI Yaması & Linnea ve Dornman Limanı'nın Gelişine:</h3>
+    <div id="timer">
+        <span id="days">00</span> Gün 
+        <span id="hours">00</span> Saat 
+        <span id="minutes">00</span> Dakika 
+        <span id="seconds">00</span> Saniye
+    </div>
+</div>
+  <div class="patch-item"></div>
+ <span class="patch-date">05 Nisan 2026</span>
+        <span class="patch-version">v1.2.1</span>
+        <p class="patch-text">
+             ✨ <strong>Yeni Yama Geri Sayımı:</strong> Yeni yama ve bannerlar için geri sayım eklendi. 6.5/Luna VI yaması geri sayımı aktifleştirildi.<br>
+            🛠️ <strong>Hata!:</strong> Flins rehberi bölümünde güncellenme sıkıntısı yaşıyoruz, en kısa ve müsait zamanda çözmeye ve güncel hale getirmeye çalışacağız.
+        </p>
+
+    <div class="patch-item old-patch">
         <span class="patch-date">05 Nisan 2026</span>
         <span class="patch-version">v1.2</span>
         <p class="patch-text">
@@ -527,6 +570,35 @@
         }
     }, 1500);
 });
-    </script>
+    </script> 
+    <script>
+        // HEDEF TARİHİ BURADAN AYARLA (Yıl, Ay-1, Gün, Saat, Dakika)
+// Not: Aylar 0'dan başlar (Ocak=0, Nisan=3)
+const targetDate = new Date(2026, 3, 8, 6, 0, 0).getTime(); 
+
+const timerFunction = setInterval(function() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    // Zaman hesaplamaları
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Ekrana yazdırma (Bu ID'lerin HTML'de olduğundan emin ol)
+    document.getElementById("days").innerText = days;
+    document.getElementById("hours").innerText = hours;
+    document.getElementById("minutes").innerText = minutes;
+    document.getElementById("seconds").innerText = seconds;
+
+    // Süre bittiğinde durdurma
+    if (distance < 0) {
+        clearInterval(timerFunction);
+        document.getElementById("timer-title").innerText = "🎉 GÜNCELLEME GELDİ!";
+        document.getElementById("timer").innerHTML = "Sunucular Açıldı!";
+    }
+}, 1000); // Kırmızı yanan yer tam burasıydı, şimdi düzelmiş olmalı.
+</script>
 </body>
 </html>
